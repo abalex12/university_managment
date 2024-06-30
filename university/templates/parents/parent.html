@@ -1,0 +1,319 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+<title>{{ user_profile.role }}-dashboard</title>
+
+<link rel="shortcut icon" href="{% static 'assets/img/download_small.jpeg' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
+
+<link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/simple-calendar/simple-calendar.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+<body>
+
+<div class="main-wrapper">
+
+    <div class="header">
+        <div class="header-left">
+            <a href="index.html" class="logo">
+                <img src="{% static 'assets/img/downloads.png' %}" alt="Logo">
+            </a>
+            <a href="index.html" class="logo logo-small">
+                <img src="{% static 'assets/img/download_small.jpeg' %}" alt="Logo" width="30" height="30">
+            </a>
+        </div>
+
+        <a href="javascript:void(0);" id="toggle_btn">
+            <i class="fas fa-align-left"></i>
+        </a>
+
+        <div class="top-nav-search">
+            <form>
+                <input type="text" class="form-control" placeholder="Search here">
+                <button class="btn" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <a class="mobile_btn" id="mobile_btn">
+            <i class="fas fa-bars"></i>
+        </a>
+
+        <ul class="nav user-menu">
+            <li class="nav-item dropdown noti-dropdown">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                    <i class="far fa-bell"></i> <span class="badge badge-pill">3</span>
+                </a>
+                <div class="dropdown-menu notifications">
+                    <div class="topnav-dropdown-header">
+                        <span class="notification-title">Notifications</span>
+                        <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
+                    </div>
+                    <div class="noti-content">
+                        <ul class="notification-list">
+                            <li class="notification-message">
+                                <a href="#">
+                                    <div class="media">
+                                        <span class="avatar avatar-sm">
+                                            <img class="avatar-img rounded-circle" alt="User Image" src="{% static 'assets/img/profiles/avatar-02.jpg' %}">
+                                        </span>
+                                        <div class="media-body">
+                                            <p class="noti-details"><span class="noti-title">Mercury Software Inc</span> added a new product <span class="noti-title">Apple MacBook Pro</span></p>
+                                            <p class="noti-time"><span class="notification-time">12 mins ago</span></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="topnav-dropdown-footer">
+                        <a href="#">View all Notifications</a>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown has-arrow">
+                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                    <span class="user-img">
+                        {% if user_profile.profile_picture %}
+                            <img class="rounded-circle" src="{{ user_profile.profile_picture.url }}" width="31" alt="">
+                        {% else %}
+                            <img class="rounded-circle" src="{% static 'assets/img/profile.png' %}" width="31" alt="">
+                        {% endif %}
+                    </span>
+                </a>
+                <div class="dropdown-menu">
+                    <div class="user-header">
+                        <div class="avatar avatar-sm">
+                            {% if user_profile.profile_picture %}
+                                <img src="{{ user_profile.profile_picture.url }}" alt="User Image" class="avatar-img rounded-circle">
+                            {% else %}
+                                <img src="{% static 'assets/img/profile.png' %}" alt="User Image" class="avatar-img rounded-circle">
+                            {% endif %}
+                        </div>
+                        <div class="user-text">
+                            <h6>{{ user_profile.first_name }} {{ user_profile.last_name }}</h6>
+                            <p class="text-muted mb-0">{{ user_profile.role }}</p>
+                        </div>
+                    </div>
+                    <a class="dropdown-item" href="{% url 'academics:detail' %}">My Profile</a>
+                    <a class="dropdown-item" href="inbox.html">Inbox</a>
+                    <a class="dropdown-item" href="{% url 'userauth:sign-out' %}">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>
+                    <li class="menu-title">
+                        <span>Main Menu</span>
+                    </li>
+                    <li class="submenu {% if request.path == '/dashboard/' %}active{% endif %}">
+                       <li> <a href="{% url 'userauth:dashboard' %}"><i class="fas fa-user-graduate"></i> <span> Dashboard</span> <span class="menu-arrow"></span></a></li>
+                    </li>
+                    <li class="submenu {% if request.path == '/detail/' %}active{% endif %}">
+                        <a href="#"><i class="fas fa-user-graduate"></i> <span> Profile</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            {% if user_profile.role.role_name == "Student" %}
+                                <li><a href="{% url 'academics:detail' %}">Student Details</a></li>
+                                <li><a href="{% url 'academics:edit_detail' %}">Edit Details</a></li>
+                            {% elif user_profile.role.role_name == "Teacher" %}
+                                <li><a href="{% url 'academics:detail' %}">Teacher Details</a></li>
+                                <li><a href="{% url 'academics:edit_detail' %}">Edit Details</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if user_profile.role.role_name == "Student" %}
+                        <li class="submenu {% if request.path == '/course-registration/' %}active{% endif %}">
+                            <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Course </span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><span>Current Courses</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        {% for course in current_enrollments %}
+                                            <li class="submenu">
+                                                <a href="javascript:void(0);"><span>{{ course.course_semester.course.course_name }}</span> <span class="menu-arrow"></span></a>
+                                                <ul>
+                                                    <li><a href="{% url 'assessment:assignment_view' course.course_semester.course.course_id %}">Assignments</a>
+                                                        <!-- <li class="submenu">
+                                                            <li><a href=""><span>{{ course.course_semester.course.course_name }}</span> <span class="menu-arrow"></span></a></li>
+                                                        </li> -->
+                                                    </li>
+                                                    <li><a href="{% url 'assessment:Quiz_view' course.course_semester.course.course_id %}">Quizzes</a>
+                                                        <!-- <li class="submenu">
+                                                            <li><a href=""><span>{{ course.course_semester.course.course_name }}</span> <span class="menu-arrow"></span></a></li>
+                                                        </li> -->
+                                                    </li>
+                                                    <li><a href="javascript:void(0);">Materials</a></li>
+                                                    <li><a href="javascript:void(0);">About The course</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                <li><a href="{% url 'academics:course_registration' %}">Course Registration</a></li>
+                            </ul>
+                        </li>
+                    {% elif user_profile.role.role_name == "Teacher" %}
+                        <li class="submenu {% if request.path == '/teacher/courses/' %}active{% endif %}">
+                            <li><a href="{% url 'assessment:sections' %}"><i class="fas fa-chalkboard-teacher"></i> <span> Section </span> <span class="menu-arrow"></span></a></li>
+                            <!-- <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><span> Section </span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        {% for course in teacher_courses %}
+                                            <li class="submenu">
+                                                <a href="javascript:void(0);"><span>{{ course.course_semester.course.course_name }} {{course.section}}</span> <span class="menu-arrow"></span></a>
+                                                <ul>
+                                                    <li><a href="#">Assignments</a>
+                                                        <ul>
+                                                            {% for assignment in assignments %}
+                                                                {% if assignment.teacher_course.course_semester.course == course.course_semester.course %}
+                                                                    <li><a href="#">{{ assignment.title }}</a></li>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                    
+                                                    <li><a href="#">Quizzes</a>
+                                                        <ul>
+                                                            {% for quiz in quizzes %}
+                                                                {% if quiz.teacher_course.course_semester.course == course.course_semester.course %}
+                                                                    <li><a href="#">{{ quiz.title }}</a></li>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </ul>
+                                                    </li>
+                                                    <li><a href="javascript:void(0);">Materials</a></li>
+                                                    <li><a href="javascript:void(0);">About The course</a></li>
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            </ul> -->
+                        </li>
+                    {% endif %}
+                    {% if user_profile.role.role_name == "Student" %}
+                    <li class="submenu {% if request.path == '/course-registration/' %}active{% endif %}">
+                        <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Assignment </span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><span>Courses</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    {% for course in current_enrollments %}
+                                        <li class="submenu">
+                                            <li><a href="{% url 'assessment:assignment_view' course.course_semester.course.course_id %}"><span>{{ course.course_semester.course.course_name }}</span> <span class="menu-arrow"></span></a></li>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% if user_profile.role.role_name == "Student" %}
+                    <li class="submenu {% if request.path == '/course-registration/' %}active{% endif %}">
+                        <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Quiz </span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li class="submenu">
+                                <a href="javascript:void(0);"><span>Courses</span> <span class="menu-arrow"></span></a>
+                                <ul>
+                                    {% for course in current_enrollments %}
+                                        <li class="submenu">
+                                            <li><a href="{% url 'assessment:Quiz_view' course.course_semester.course.course_id %}"><span>{{ course.course_semester.course.course_name }}</span> <span class="menu-arrow"></span></a></li>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Attendance</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <!-- Additional Attendance Links can be added here -->
+                        </ul>
+                    </li>
+                    <li class="submenu">
+                        <a href="#"><i class="fas fa-shield-alt"></i> <span> Authentication </span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <!-- Additional Authentication Links can be added here -->
+                        </ul>
+                    </li>
+                    <li class="menu-title">
+                        <span>Others</span>
+                    </li>
+                    <li>
+                        <a href="sports.html"><i class="fas fa-baseball-ball"></i> <span>Sports</span></a>
+                    </li>
+                    <li>
+                        <a href="hostel.html"><i class="fas fa-hotel"></i> <span>Hostel</span></a>
+                    </li>
+                    <li>
+                        <a href="transport.html"><i class="fas fa-bus"></i> <span>Transport</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<!-- <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/plugins/simple-calendar/jquery.simple-calendar.js' %}"></script>
+<script src="{% static 'assets/js/script.js' %}"></script>
+</body>
+</html> -->
+
+
+{% block content %}
+{% endblock %}
+<footer>
+    <p>Copyright © 2020 CGU Reserved.</p>
+    </footer>
+    
+    </div>
+    
+    </div>
+    <style>
+        /* .main-wrapper{
+            background-color: aqua;
+        } */
+        /* .header{
+            background-color: aquamarine;
+        }
+        .sidebar{
+            background-color: aquamarine;
+        }
+        .header .header-left{
+            background-color: aquamarine;
+        } */
+    </style>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    
+    <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+    
+    <script src="{% static 'assets/plugins/apexchart/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/apexchart/chart-data.js' %}"></script>
+    
+    <script src="{% static 'assets/plugins/simple-calendar/jquery.simple-calendar.js' %}"></script>
+    <script src="{% static 'assets/js/calander.js' %}"></script>
+    
+    <script src="{% static 'assets/js/circle-progress.min.js' %}"></script>
+    
+    <script src="{% static 'assets/js/script.js' %}"></script>
+    </body>
+        </html>

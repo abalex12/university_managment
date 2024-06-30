@@ -1,0 +1,284 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Edit Profile</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="students.html">Profile</a></li>
+                        <li class="breadcrumb-item active">Edit Profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                
+                                <div class="col-12">
+                                    <h5 class="form-title"><span>{{ user.role.role_name }} Information</span></h5>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_first_name">First Name</label>
+                                        {{ user_form.first_name }}
+                                        {% if user_form.first_name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.first_name.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_last_name">Last Name</label>
+                                        {{ user_form.last_name }}
+                                        {% if user_form.last_name.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.last_name.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_username">Student ID</label>
+                                        {{ user_form.username }}
+                                        {% if user_form.username.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.username.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_gender">Gender</label>
+                                        {{ user_form.gender }}
+                                        {% if user_form.gender.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.gender.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_date_of_birth">Date of Birth</label>
+                                        {{ user_form.date_of_birth }}
+                                        {% if user_form.date_of_birth.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.date_of_birth.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_email">Email</label>
+                                        {{ user_form.email }}
+                                        {% if user_form.email.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.email.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-group">
+                                        <label for="id_profile_picture">Profile Picture</label>
+                                        {{ user_form.profile_picture }}
+                                        {% if user_form.profile_picture.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in user_form.profile_picture.errors %}
+                                                    <p>{{ error }}</p>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if user.role.role_name == "Student" %}
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_current_semester">Current Semester</label>
+                                            {{ student_form.semester }}
+                                            {% if student_form.semester.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.semester.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_department">Department</label>
+                                            {{ student_form.department }}
+                                            {% if student_form.department.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.department.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_year">Year</label>
+                                            {{ student_form.year }}
+                                            {% if student_form.year.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.year.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_section">Section</label>
+                                            {{ student_form.section }}
+                                            {% if student_form.section.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.section.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_guardian_phone">Guardian Phone</label>
+                                            {{ student_form.guardian_phone }}
+                                            {% if student_form.guardian_phone.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.guardian_phone.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_batch">Batch</label>
+                                            {{ student_form.batch }}
+                                            {% if student_form.batch.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in student_form.batch.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% elif user.role.role_name == "Teacher" %}
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_department">Department</label>
+                                            {{ teacher_form.department }}
+                                            {% if teacher_form.department.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in teacher_form.department.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_office_hours">Office Hours</label>
+                                            {{ teacher_form.office_hours }}
+                                            {% if teacher_form.office_hours.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in teacher_form.office_hours.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_experience">Experience</label>
+                                            {{ teacher_form.experience }}
+                                            {% if teacher_form.experience.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in teacher_form.experience.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_qualifications">Qualifications</label>
+                                            {{ teacher_form.qualifications }}
+                                            {% if teacher_form.qualifications.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in teacher_form.qualifications.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group">
+                                            <label for="id_research_interests">Research Interests</label>
+                                            {{ teacher_form.research_interests }}
+                                            {% if teacher_form.research_interests.errors %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in teacher_form.research_interests.errors %}
+                                                        <p>{{ error }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

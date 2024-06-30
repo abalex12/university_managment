@@ -1,0 +1,126 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">My Assignments</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">{{ course.course_name }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>Current Assignments</strong>
+                                    <ul class="list-group">
+                                        {% for assignment in assignments %}
+                                            {% if assignment.teacher_course.course_semester.course == course %}
+                                                <li class="list-group-item">
+                                                    <a href="javascript:void(0);" onclick="toggleAssignmentDetails('{{ assignment.assignment_id }}')">{{ assignment.title }}</a>
+                                                    <div id="assignment-details-{{  assignment.assignment_id }}" class="assignment-details" style="display: none;">
+                                                        <p>{{ assignment.details }}</p> <!-- Replace with actual assignment details -->
+                                                        <p> {{ assignment.description }}</p>
+                                                        <a href="{{ assignment.file.url }}" target="_blank">Download Assignment</a><br>
+                                                        Date: {{ assignment.due_date }}<br>
+                                                        <div class="">
+                                                            <button class="btn btn-primary float-right"><a href="{% url 'assessment:submit_assignment' assignment.assignment_id %}">submit Work </a></button>
+                                                        </div>
+                                                    </div>
+                                        
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="buttons">
+                        <button class="btn btn-secondary" onclick="showSubmittedAssignments('{{ course.id }}', '{{ assignment.id }}')">View Submitted Assignments</button>
+                        <div id="submitted-assignments-{{ assignment.id }}" class="submitted-assignments" style="display: none;">
+                    </div>
+                    <button class="btn btn-secondary" onclick="showUnSubmittedAssignments('{{ course.id }}', '{{ assignment.id }}')">View UnSubmitted Assignments</button>
+                    <div id="unsubmitted_assignments-{{ assignment.id }}" class="unsubmitted_assignments" style="display: none;">
+                </div>
+            </div>
+                </div>
+             
+            
+        </div>
+    </div>
+</div>
+<style>
+    .buttons{
+        display:inline-flexbox;
+        margin: 10px;
+    }
+</style>
+<script>
+function toggleAssignmentDetails(assignmentId) {
+    const divId = `assignment-details-${assignmentId}`;
+    const div = document.getElementById(divId);
+    if (div) {
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+}
+function showSubmittedAssignments(courseId, assignmentId) {
+    const divId = `submitted-assignments-${assignmentId}`;
+    const div = document.getElementById(divId);
+
+    // Toggle visibility
+    if (div.style.display === 'none') {
+        // Simulate fetching submitted assignments data (this should ideally be done via AJAX)
+        
+        div.innerHTML = `
+         {% for submitted_assignment in submitted_assignments %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">{{ submitted_assignment.assignment.title }} at: {{ submitted_assignment.submitted_at}}</li>
+            </ul>
+            {% empty %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">No submissions</li>
+            </ul>
+            {% endfor %}
+        `;
+        div.style.display = 'block';
+    } else {
+        div.style.display = 'none';
+    }
+}
+
+function showUnSubmittedAssignments(courseId, assignmentId) {
+    const divId = `unsubmitted_assignments-${assignmentId}`;
+    const div = document.getElementById(divId);
+
+    // Toggle visibility
+    if (div.style.display === 'none') {
+        // Simulate fetching submitted assignments data (this should ideally be done via AJAX)
+        
+        div.innerHTML = `
+         {% for unsubmitted_assignment in unsubmitted_assignments %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">{{unsubmitted_assignment.title }} at: {{ unsubmitted_assignment.due_date }}</li>
+            </ul>
+            {% empty %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">No submissions</li>
+            </ul>
+            {% endfor %}
+        `;
+        div.style.display = 'block';
+    } else {
+        div.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

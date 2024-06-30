@@ -1,0 +1,129 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="container">
+
+                    <h1>{{ quiz.title }}</h1>
+                    <p>{{ quiz.description }}</p>
+
+                    {% for question in questions %}
+                      <div class="question-container">
+                        <div class="question-text">
+                          {% if question.question_text %}
+                            <p>{{ forloop.counter }}. {{ question.question_text }}</p>
+                          {% endif %}
+                          {% if question.question_image %}
+                            <img src="{{ question.question_image.url }}" alt="Question Image" class="question-image">
+                          {% endif %}
+                        </div>
+
+                        <div class="choices-container">
+                          <div class="choice">
+                            {% if question.choice_1_text %}
+                              <label><input type="radio" name="question_{{ question.question_id }}" value="1"> A. {{ question.choice_1_text }}</label>
+                            {% endif %}
+                            {% if question.choice_1_image %}
+                              <label> A. <img src="{{ question.choice_1_image.url }}" alt="Choice A Image" class="choice-image"></label>
+                            {% endif %}
+                          </div>
+
+                          <div class="choice">
+                            {% if question.choice_2_text %}
+                              <label><input type="radio" name="question_{{ question.question_id }}" value="2"> B. {{ question.choice_2_text }}</label>
+                            {% endif %}
+                            {% if question.choice_2_image %}
+                            <label> B. <img src="{{ question.choice_2_image.url }}" alt="Choice B Image" class="choice-image"></label>
+                            {% endif %}
+                          </div>
+
+                          <div class="choice">
+                            {% if question.choice_3_text %}
+                              <label><input type="radio" name="question_{{ question.question_id }}" value="3"> C. {{ question.choice_3_text }}</label>
+                            {% endif %}
+                            {% if question.choice_3_image %}
+                            <label> C. <img src="{{ question.choice_3_image.url }}" alt="Choice C Image" class="choice-image"></label>
+                            {% endif %}
+                          </div>
+
+                          <div class="choice">
+                            {% if question.choice_4_text %}
+                              <label><input type="radio" name="question_{{ question.question_id }}" value="4"> D. {{ question.choice_4_text }}</label>
+                            {% endif %}
+                            {% if question.choice_4_image %}
+                            <label> D. <img src="{{ question.choice_4_image.url }}" alt="Choice D Image" class="choice-image"></label>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                    <style>
+                      .question-container {
+                        margin-bottom: 20px;
+                        padding: 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                      }
+
+                      .question-text {
+                        margin-bottom: 10px;
+                      }
+
+                      .question-text img {
+                        max-width: 100%;
+                        height: auto;
+                      }
+                      .question-image {
+                      max-width: 100%;
+                      height: 150px;
+                      width: 100%;
+                      object-fit: cover;
+                      display: block;
+                      margin-top: 10px;
+                    }
+
+                      .choices-container {
+                        display: flex;
+                        flex-wrap: wrap;
+                      }
+
+                      .choice {
+                        flex: 1 1 45%;
+                        margin: 10px;
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        box-sizing: border-box;
+                      }
+                      .choice-image {
+                      max-width: 100%;
+                      height: 100px;
+                      width: 100%;
+                      object-fit: cover;
+                      display: block;
+                      margin-top: 10px;
+                    }
+
+                      .choice label {
+                        display: block;
+                        margin-bottom: 5px;
+                      }
+
+                      .choice img {
+                        max-width: 100%;
+                        height: auto;
+                      }
+                    </style>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

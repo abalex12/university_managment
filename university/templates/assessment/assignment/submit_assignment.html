@@ -1,0 +1,22 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+       <div class="page-header">
+          <div class="row">
+             <div class="col-sm-12">
+                <h1>{{assignment.title}}</h1>
+                <h2>Submit Assignment {{assignment.teacher_course.course_semester.course.course_name}}</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Save</button>
+                </form>
+             </div>
+          </div>
+       </div>
+    </div>
+</div>
+
+{% endblock %}

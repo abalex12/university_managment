@@ -1,0 +1,129 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-wrapper">
+  <div class="content container-fluid">
+     <div class="page-header">
+        <div class="row align-items-center">
+           <div class="col">
+              <h3 class="page-title">Courses</h3>
+              <ul class="breadcrumb">
+                 <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                 <li class="breadcrumb-item active">Course Registration</li>
+              </ul>
+           </div>
+        </div>
+     </div>
+
+        <div class="col-sm-12">
+          <div class="card card-table">
+            <div class="card-body">
+              <div class="table-responsive">
+                <form method="post">
+                  {% csrf_token %}
+                  <table class="table table-hover table-center mb-0 datatable">
+                    <thead>
+                      <tr>
+                        <th>CourseID</th>
+                        <th>CourseName</th>
+                        <th>Credit</th>
+                        <th class="text-right">
+                          Register  <input type="checkbox" id="select_all" onclick="toggleSelectAll(this)"> 
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for course_offering in available_courses %}
+                        <tr>
+                          <td>{{ course_offering.course.course_code }}</td>
+                          <td>
+                            <h2><a>{{ course_offering.course.course_name }}</a></h2>
+                          </td>
+                          <td>{{ course_offering.course.credit_hours }}</td>
+                          <td class="text-right">
+                            <div class="actions">
+                              {% if course_offering.id in enrolled_course_ids %}
+                                <span class="badge badge-success">Already Registered</span>
+                              {% else %}
+                                <input type="checkbox" name="course_semester_ids" value="{{ course_offering.id }}" class="course_checkbox" id="course_{{ course_offering.id }}">
+                              {% endif %}
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                    
+                  </table>
+                  <div class="text-right mt-3">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Registration Successful</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        You have successfully registered for the following courses:
+        <table class="table table-hover table-center mb-0 datatable">
+          <thead>
+            <tr>
+              <th>CourseID</th>
+              <th>CourseName</th>
+              <th>Credit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for course_offering in available_courses %}
+              <tr>
+                <td>{{ course_offering.course.course_code }}</td>
+                <td>
+                  <h2><a>{{ course_offering.course.course_name }}</a></h2>
+                </td>
+                <td>{{ course_offering.course.credit_hours }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn"><i class="fa fa-download"></i> Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleSelectAll(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('.course_checkbox');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var success = "{{ success }}";
+    if (success === "True") {
+      $('#successModal').modal('show');
+    }
+  });
+</script>
+
+{% endblock %}

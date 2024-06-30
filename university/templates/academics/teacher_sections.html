@@ -1,0 +1,165 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="container-fluid">
+                        <div class="course-item1 ">
+                            <h3>{{ user_profile.first_name }} {{user_profile.last_name }}'s Sections</h3>
+                            <p>Academic Year: <span>{{current_academic_year_and_semester}}</span></p>
+                            <h6>Academic Semester: <span>{{current_academic_year_and_semester.academic_Semester}}</span></h6>
+
+                        </div> 
+                        <br>
+
+                        {% if teacher_courses %}
+                            <div class="course-list">
+                                <div class="course-item1">
+                                        <div>Section</div>
+                                        <div>Department</div>
+                                        <div>Course ID</div>                                       
+                                        <div>Course Name</div>
+                                        <div>Credit</div>
+                                        <div>Remark</div>
+                                </div>
+                                {% for teacher_course in teacher_courses %}
+                                    <div class="course-item clickable-row" data-index="{{ forloop.counter }}">
+                                        <div class="course-section">{{ teacher_course.section.section_name }}</div>
+                                        <div class="course-department">{{ teacher_course.section.department.department_name }}</div>
+                                        <div class="course-id">{{ teacher_course.course_semester.course.course_code }}</div>
+                                        <div class="course-name">{{ teacher_course.course_semester.course.course_name }}</div>
+                                        <div class="course-credit">{{ teacher_course.course_semester.course.credit_hours }}</div>
+                                        <div class="course-remark"><a href="javascript:void(0);">Details</a></div>
+                                    </div>
+                                    <div id="details-{{ forloop.counter }}" class="details-row collapse">
+                                        <div class="dropdown-content">
+                                            <a class="dropdown-item" href="{% url 'assessment:create_assignment' teacher_course.teacher_course_id %}">Create Assignments</a>
+                                            <a class="dropdown-item" href="{% url 'assessment:teacher_assignments' teacher_course.teacher_course_id %}">Check Submited Assignments</a>
+                                            <a class="dropdown-item" href="{% url 'assessment:create_quiz' teacher_course.teacher_course_id %} ">Quizzes</a>
+                                            <!-- <a class="dropdown-item" href="#">Quizzes</a> -->
+                                            <a class="dropdown-item" href="#">Materials</a>
+                                            <a class="dropdown-item" href="#">Grades</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info mt-3" role="alert">
+                                You are not teaching any courses in {{ semester_year }}.
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            {% if message %}
+                                <div class="alert alert-info mt-3" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* .page-wrapper{
+        background-color: #867c7c;
+
+    } */
+    .course-list {
+        margin-top: 20px;
+    }
+    .course-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #ffffff;
+        border:solid  #f9f9f9;
+    }
+    .course-item1{
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #635f5f;
+        border:solid  #f9f9f9;
+        color: white;
+
+    }
+    .course-item:hover{
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        color:  #007bff;
+        font-weight: bolder;
+        transform: scale(1.06);
+    }
+    .course-item div {
+        flex: 1;
+        padding: 0 10px;
+    }
+    .course-item1 div{
+        flex: 1;
+        padding: 0 10px;
+    }
+    .details-row {
+        display: none;
+    }
+    .details-row.show {
+        display: block;
+        /* border: 1px solid #696868; */
+        margin-bottom: 10px;
+    }
+    .clickable-row {
+        cursor: pointer;
+    }
+    .dropdown-content {
+        background-color: #f9f9f9;
+        /* border: 1px solid #ccc; */
+        padding: 10px 20px;
+    }
+    .dropdown-item {
+        padding: 10px 15px;
+        display: block;
+        text-decoration: none;
+        color: #333;
+        /* border-bottom: 1px solid #ddd; */
+    }
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+    .dropdown-item:hover {
+        background-color: #ffffff;
+        color: #007bff;
+        transform: scale(1.1);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var clickableRows = document.querySelectorAll(".clickable-row");
+        clickableRows.forEach(function(row) {
+            row.addEventListener("click", function() {
+                var index = row.getAttribute("data-index");
+                var detailsRow = document.querySelector("#details-" + index);
+                var isShown = detailsRow.classList.contains("show");
+
+                document.querySelectorAll(".details-row").forEach(function(element) {
+                    element.classList.remove("show");
+                });
+
+                if (!isShown) {
+                    detailsRow.classList.add("show");
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">My Quizzes</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">{{ course.course_name }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <strong>Current Quiz</strong>
+                                <ul class="list-group">
+                                    {% for quiz in quizzes %}
+                                        {% if quiz.teacher_course.course_semester.course == course %}
+                                            <li class="list-group-item">
+                                                <a href="javascript:void(0);" onclick="toggleAssignmentDetails('{{quiz.quiz_id}}')">{{ quiz.title }}</a>
+                                                <div id="quiz-details-{{ quiz.quiz_id }}" class="quiz-details" style="display: none;">
+                                                    <p>{{ quiz.details }}</p>
+                                                    <p>{{ quiz.description }}</p>
+                                                    Starts at: {{ quiz.quiz_starting_date_and_time }}<br>
+                                                    <p>Total questions: {{ quiz.total_questions }}</p><br>
+                                                    <p>Time: {{ quiz.time_limit }} min</p>
+                                                    <div>
+                                                        <button class="btn btn-primary float-right">
+                                                            <a href="{% url 'assessment:take_quiz' quiz.quiz_id %}">Start Quiz</a>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary" onclick="showSubmittedQuizzes('{{ quiz.id }}')">Taken Past Quiz</button>
+                        <div id="submitted-quizzes-{{ quiz.id }}" class="submitted-quizzes" style="display: none;"></div>
+                        <button class="btn btn-secondary" onclick="showUnsubmittedQuizzes('{{ quiz.id }}')">Not Taken Past Quiz</button>
+                        <div id="unsubmitted-quizzes-{{ quiz.id }}" class="unsubmitted-quizzes" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .assignment-details {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #f8f9fa;
+        border: solid #403d3d;
+    }
+</style>
+
+<script>
+function toggleAssignmentDetails(quizId) {
+    const divId = `quiz-details-${quizId}`;
+    const div = document.getElementById(divId);
+    if (div) {
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function showSubmittedQuizzes(quizId) {
+    const divId = `submitted-quizzes-${quizId}`;
+    const div = document.getElementById(divId);
+
+    if (div.style.display === 'none') {
+        div.innerHTML = `
+            {% for submitted_quiz in submitted_quizzes %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">{{ submitted_quiz.quiz.title }} at: {{ submitted_quiz.submitted_at }}</li>
+            </ul>
+            {% empty %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">No submissions</li>
+            </ul>
+            {% endfor %}
+        `;
+        div.style.display = 'block';
+    } else {
+        div.style.display = 'none';
+    }
+}
+
+function showUnsubmittedQuizzes(quizId) {
+    const divId = `unsubmitted-quizzes-${quizId}`;
+    const div = document.getElementById(divId);
+
+    if (div.style.display === 'none') {
+        div.innerHTML = `
+            {% for unsubmitted_quiz in unsubmitted_quizzes %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">{{ unsubmitted_quiz.title }} at: {{ unsubmitted_quiz.quiz_starting_date_and_time }}</li>
+            </ul>
+            {% empty %}
+            <ul class="list-group mt-3">
+                <li class="list-group-item">No submissions</li>
+            </ul>
+            {% endfor %}
+        `;
+        div.style.display = 'block';
+    } else {
+        div.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

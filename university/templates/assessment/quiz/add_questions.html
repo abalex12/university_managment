@@ -1,0 +1,157 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="container">
+                        <h1>Add Questions to Quiz: {{ quiz.title }}</h1>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            
+                            {% for form in formset %}
+                            <div class="question-container">
+                                <div class="question-text">
+                                <div class="form-group">
+                                    {{ forloop.counter }}.{{ form.question_text.label_tag }}
+                                     {{ form.question_text }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.question_image.label_tag }}
+                                    {{ form.question_image }}
+                                </div>
+                                </div>
+
+                                <div class="choices-container">
+                                <div class="choice">
+                                    <div class="form-group">
+                                    A.
+                                    {{ form.choice_1_text.label_tag }}
+                                     {{ form.choice_1_text }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_1_image.label_tag }}
+                                    {{ form.choice_1_image }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_1_is_correct.label_tag }}
+                                    {{ form.choice_1_is_correct }}
+                                    </div>
+                                </div>
+
+                                <div class="choice">
+                                    <div class="form-group">
+                                    B.
+                                    {{ form.choice_2_text.label_tag }}
+                                    {{ form.choice_2_text }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_2_image.label_tag }}
+                                    {{ form.choice_2_image }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_2_is_correct.label_tag }}
+                                    {{ form.choice_2_is_correct }}
+                                    </div>
+                                </div>
+
+                                <div class="choice">
+                                    <div class="form-group">
+                                    C.
+                                    {{ form.choice_3_text.label_tag }}
+                                    {{ form.choice_3_text }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_3_image.label_tag }}
+                                    {{ form.choice_3_image }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_3_is_correct.label_tag }}
+                                    {{ form.choice_3_is_correct }}
+                                    </div>
+                                </div>
+
+                                <div class="choice">
+                                    <div class="form-group">
+                                        D.
+                                    {{ form.choice_4_text.label_tag }}
+                                    {{ form.choice_4_text }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_4_image.label_tag }}
+                                    {{ form.choice_4_image }}
+                                    </div>
+                                    <div class="form-group">
+                                    {{ form.choice_4_is_correct.label_tag }}
+                                    {{ form.choice_4_is_correct }}
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <hr>
+                            {% endfor %}
+                            
+                            <button type="submit">Add Questions</button>
+                        </form>
+                        <a href="{% url 'assessment:quiz_detail' quiz.quiz_id %}">Back to Quiz</a>
+
+                        <style>
+                        .question-container {
+                            margin-bottom: 20px;
+                            padding: 15px;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                        }
+
+                        .question-text {
+                            max-width: 100%;
+                            margin-bottom: 10px;
+                        }
+
+                        .question-text img {
+                            /* max-width: 100%; */
+                            height: auto;
+                        }
+
+                        .choices-container {
+                            display: flex;
+                            flex-wrap: wrap;
+                        }
+
+                        .choice {
+                            flex: 1 1 45%;
+                            margin: 10px;
+                            padding: 10px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            box-sizing: border-box;
+                        }
+
+                        .choice label {
+                            display: block;
+                            margin-bottom: 5px;
+                        }
+
+                        .choice img {
+                            max-width: 100%;
+                            height: auto;
+                        }
+
+                        .form-group {
+                            margin-bottom: 10px;
+                        }
+                        </style>
+
+
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

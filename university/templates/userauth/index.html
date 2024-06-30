@@ -1,0 +1,203 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="page-wrapper">
+<div class="content container-fluid">
+
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-12">
+        <h3 class="page-title">Welcome {{user_profile.first_name}} {{ user_profile.last_name}}!</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                <li class="breadcrumb-item active">{{user_profile.role}} </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    {% for i in current_courses %}
+    <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-nine w-100">
+            <a href="#">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-icon">
+                        <i class="fas fa-book-open"></i>
+                        
+                    </div>
+                     
+                        <div class="db-info">
+                        <!-- <h5><a href="{% url 'assessment:assignment_view' i.course_id %}">Assignment</a></h5>
+                        <h5> <a href="{% url 'assessment:Quiz_view' i.course_id %}">Quiz</a></h5> -->
+                        <h6>{{i.course_name}}</h6>
+                        <h6>{{i.course_code}}</h6>
+                    </div>
+                
+                </div>
+            </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-six w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-icon">
+                    <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="db-info">
+                    <h3>40/60</h3>
+                    <h6>{{current_courses}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-six w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-icon">
+                    <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="db-info">
+                    <h3>40/60</h3>
+                    <h6>{{current_courses}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-six w-100">
+            <div class="card-body">
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-icon">
+                    <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="db-info">
+                    <h3>40/60</h3>
+                    <h6>{{current_courses}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="row">
+<div class="col-12 col-lg-12 col-xl-9">
+<div class="card flex-fill">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col-6">
+            <h5 class="card-title">Upcoming Quizs and Assignments </h5>
+            </div>
+            <div class="col-6">
+            <span class="float-right view-link"><a href="#">what is this?</a></span>
+            </div>
+        </div>
+    </div>
+<div class="dash-circle">
+<div class="row">
+<div class="col-12 col-lg-6 col-xl-6 dash-widget3">
+    <div class="card-body dash-widget1">
+    <div class="circle-bar circle-bar2">
+        <div class="circle-graph2" data-percent="20">
+            <b>20%</b>
+            </div>
+            <h6>Completed</h6>
+            <h4>1 <span>/ 5</span></h4>
+    </div>
+    <div class="dash-details">
+    <h4> Upcoming Assignments</h4>
+            <ul>
+                <li><i class="fas fa-clock"></i> Java</li>
+                <li><i class="fas fa-book-open"></i> Monday</li>
+                <li><i class="fas fa-hourglass-end"></i> 2:30 pm -3:00 pm</li>
+                <li><i class="fas fa-clipboard-check"></i> countdown </li>
+            </ul>
+        <div class="dash-btn">
+            <button type="submit" class="btn btn-info btn-border">Skip</button>
+            <button type="submit" class="btn btn-info">Continue</button>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="col-12 col-lg-6 col-xl-6 dash-widget3">
+    <div class="card-body dash-widget1">
+    <div class="circle-bar circle-bar2">
+        <div class="circle-graph2" data-percent="20">
+            <b>20%</b>
+            </div>
+            <h6>Completed</h6>
+            <h4>1 <span>/ 5</span></h4>
+    </div>
+    <div class="dash-details">
+    <h4>Upcoming Quizs</h4>
+            <ul>
+                    <li><i class="fas fa-clock"></i> Java</li>
+                    <li><i class="fas fa-book-open"></i> Monday</li>
+                    <li><i class="fas fa-hourglass-end"></i> 2:30 pm -3:00 pm</li>
+                    <li><i class="fas fa-clipboard-check"></i> countdown </li>
+            </ul>
+        <div class="dash-btn">
+            <button type="submit" class="btn btn-info btn-border">See More</button>
+            <button type="submit" class="btn btn-info">Continue</button>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+
+<div class="col-12 col-lg-12 col-xl-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            <h5 class="card-title">Learning History</h5>
+        </div>
+        <div class="card-body">
+            <div class="teaching-card">
+                <ul class="activity-feed">
+                    <li class="feed-item">
+                        <div class="feed-date1">Sep 05, 9 am - 10 am (60min)</div>
+                        <span class="feed-text1"><a>course 1 </a></span>
+                        <p><span>In Progress</span></p>
+                    </li>
+                    <li class="feed-item">
+                        <div class="feed-date1">Sep 05, 9 am - 10 am (60min)</div>
+                        <span class="feed-text1"><a>course 1 </a></span>
+                        <p><span>In Progress</span></p>
+                    </li>
+                    <li class="feed-item">
+                        <div class="feed-date1">Sep 05, 9 am - 10 am (60min)</div>
+                        <span class="feed-text1"><a>course 1 </a></span>
+                        <p><span>In Progress</span></p>
+                    </li>
+                    <li class="feed-item">
+                        <div class="feed-date1">Sep 05, 9 am - 10 am (60min)</div>
+                        <span class="feed-text1"><a>course 1 </a></span>
+                        <p><span>In Progress</span></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+</div>
+
+</div>
+
+
+{% endblock %}
