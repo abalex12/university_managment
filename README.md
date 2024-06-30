@@ -1,2 +1,3 @@
 # university_managment
-university_managment using djanog
+university_managment using django
+
