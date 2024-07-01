@@ -6,7 +6,6 @@ app_name='assessment'
 urlpatterns =[
     path('section/',open_sections,name="sections"),
     path('create-assignment/<str:teacher_course_id>',create_assignment,name="create_assignment"),
-    # path('student-assignments/ <str:course_id>', course_assignments, name='course_assignments'),
     path('submit-assignment/<str:assignment_id>',submit_assignment , name='submit_assignment'),
     path('teacher-assignment/<str:teacher_course_id>', teacher_view_of_assignments,name='teacher_assignments'),
     path('assignment/<str:course_id>',open_Assignment,name="assignment_view"),
@@ -16,4 +15,5 @@ urlpatterns =[
     path('take-quiz/<str:quiz_id>/', take_quiz, name='take_quiz'),
     path('quiz-detail/<str:quiz_id>/', quiz_detail, name='quiz_detail'),
     path("edit-assignment/<str:teacher_course_id>/<str:assignment_id>",edit_assignment,name='edit-assignment'),
+    path("quiz-result/<str:quiz_id>",quiz_results,name='quiz_result'),
 ]
