@@ -218,3 +218,17 @@ def take_quiz(request, quiz_id):
         'time_limit': time_limit.total_seconds() - elapsed_time,
     }
     return render(request, 'assessment/quiz/take_quiz.html', context)
+
+
+@login_required
+def quiz_results(request, quiz_id):
+    quiz = get_object_or_404(Quiz, quiz_id=quiz_id)
+    submission = get_object_or_404(QuizSubmission, quiz=quiz, student=request.user)
+    answers = QuizAnswer.objects.filter(submission=submission)
+
+    context = {
+        'quiz': quiz,
+        'submission': submission,
+        'answers': answers,
+    }
+    return render(request, 'academics/quiz/quiz_results.html', context)
