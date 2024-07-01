@@ -35,10 +35,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    def profile_image(self):
-        return mark_safe('<img src="%s" width="50" height="50" />' % (self.profile_picture.url))
-
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"

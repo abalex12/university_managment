@@ -32,7 +32,7 @@
                                                     Starts at: {{ quiz.quiz_starting_date_and_time }}<br>
                                                     <p>Total questions: {{ quiz.total_questions }}</p><br>
                                                     <p>Time: {{ quiz.time_limit }} min</p>
-                                                    <p>Quiz will start in: <span id="countdown">{{ remaining_time|floatformat:0 }}</span> seconds</p>
+                                                    <p>Remaining time: <span id="countdown-{{ quiz.quiz_id }}">{{ quiz.remaining_time }}</span> seconds</p>
                                                     <div>
                                                         <button class="btn btn-primary float-right">
                                                             <a href="{% url 'assessment:take_quiz' quiz.quiz_id %}">Start Quiz</a>
@@ -47,10 +47,10 @@
                         </ul>
                     </div>
                     <div>
-                        <button class="btn btn-secondary" onclick="showSubmittedQuizzes('{{ quiz.id }}')">Taken Past Quiz</button>
-                        <div id="submitted-quizzes-{{ quiz.id }}" class="submitted-quizzes" style="display: none;"></div>
-                        <button class="btn btn-secondary" onclick="showUnsubmittedQuizzes('{{ quiz.id }}')">Not Taken Past Quiz</button>
-                        <div id="unsubmitted-quizzes-{{ quiz.id }}" class="unsubmitted-quizzes" style="display: none;"></div>
+                        <button class="btn btn-secondary" onclick="showSubmittedQuizzes('{{ quiz.quiz_id }}')">Taken Past Quiz</button>
+                        <div id="submitted-quizzes-{{ quiz.quiz_id }}" class="submitted-quizzes" style="display: none;"></div>
+                        <button class="btn btn-secondary" onclick="showUnsubmittedQuizzes('{{ quiz.quiz_id }}')">Not Taken Past Quiz</button>
+                        <div id="unsubmitted-quizzes-{{ quiz.quiz_id }}" class="unsubmitted-quizzes" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -70,20 +70,6 @@
     }
 </style>
 <script>
-    var countdownElement = document.getElementById('countdown');
-    var remainingTime = parseInt(countdownElement.innerText);
-
-    var countdownInterval = setInterval(function() {
-    remainingTime -= 1;
-    countdownElement.innerText = remainingTime;
-
-    if (remainingTime <= 0) {
-        clearInterval(countdownInterval);
-        location.reload();
-    }
-    }, 1000);
-</script>
-<script>
 function toggleAssignmentDetails(quizId) {
     const divId = `quiz-details-${quizId}`;
     const div = document.getElementById(divId);
@@ -99,9 +85,11 @@ function showSubmittedQuizzes(quizId) {
     if (div.style.display === 'none') {
         div.innerHTML = `
             {% for submitted_quiz in submitted_quizzes %}
+            {% if submitted_quiz.quiz.teacher_course.course_semester.course == course %}
             <ul class="list-group mt-3">
                 <li class="list-group-item">{{ submitted_quiz.quiz.title }} at: {{ submitted_quiz.submitted_at }}</li>
             </ul>
+            {% endif %}
             {% empty %}
             <ul class="list-group mt-3">
                 <li class="list-group-item">No submissions</li>
@@ -121,9 +109,11 @@ function showUnsubmittedQuizzes(quizId) {
     if (div.style.display === 'none') {
         div.innerHTML = `
             {% for unsubmitted_quiz in unsubmitted_quizzes %}
+            {% if unsubmitted_quiz.teacher_course.course_semester.course == course %}
             <ul class="list-group mt-3">
                 <li class="list-group-item">{{ unsubmitted_quiz.title }} at: {{ unsubmitted_quiz.quiz_starting_date_and_time }}</li>
             </ul>
+            {% endif %}
             {% empty %}
             <ul class="list-group mt-3">
                 <li class="list-group-item">No submissions</li>

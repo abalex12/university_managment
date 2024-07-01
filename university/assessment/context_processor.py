@@ -35,7 +35,9 @@ def assessment_context_processor(request):
     context = {}
     if request.user.is_authenticated:
         user = request.user
+        
         current_academic_year_and_semester = get_current_academic_year()
+        
         try:
             if user.role.role_name == "Student":
                 student_profile = Student.objects.get(user=request.user)
@@ -54,12 +56,17 @@ def assessment_context_processor(request):
                 submitted_quiz_ids = submitted_quizzes.values_list('quiz_id', flat=True)
 
                 now = timezone.now()
+
                 unsubmitted_assignments = assignments.filter(due_date__lt=now).exclude(assignment_id__in=submitted_assignment_ids)
                 unsubmitted_quizzes = quizzes.filter(quiz_starting_date_and_time__lt=now).exclude(quiz_id__in=submitted_quiz_ids)
-                
+
                 pending_assignments = assignments.exclude(assignment_id__in=submitted_assignment_ids).exclude(due_date__lt=now)
                 pending_quizzes = quizzes.exclude(quiz_id__in=submitted_quiz_ids).exclude(quiz_starting_date_and_time__lt=now)
-                
+
+                for quiz in unsubmitted_quizzes:
+                    if quiz.quiz_starting_date_and_time + timezone.timedelta(minutes=quiz.time_limit) > now:
+                        pending_quizzes |= Quiz.objects.filter(quiz_id=quiz.quiz_id)  # Using union to add to pending_quizzes
+
                 current_courses = [enrollment.course_semester.course for enrollment in current_enrollments]
                 
                 context['current_courses'] = current_courses
@@ -70,6 +77,7 @@ def assessment_context_processor(request):
                 context['submitted_quizzes'] = submitted_quizzes
                 context['unsubmitted_assignments'] = unsubmitted_assignments
                 context['unsubmitted_quizzes'] = unsubmitted_quizzes
+
 
 
             # For teachers

@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -145,13 +145,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 JAZZMIN_SETTINGS = {
     'site_header': "CGU",
     'site_brand': "University",
-    'site_logo': "assets/img/download-smalls.png",  # Make sure the path is correct
-    'site_logo_classes': 'img-fluid',  # Add any classes to style your logo
-    'site_icon': None,  # You can add a favicon here if needed
+    'site_logo': "assets/img/download-smalls.png",  
+    'site_logo_classes': 'img-fluid',  
+    'site_icon': None, 
     'welcome_sign': "Welcome to the CGU Administration Portal",
     'copyright': "Abraham's Rights reserved",
-    'search_model': 'userauth.User',  # Enable search for the user model
-    'user_avatar': 'profile_picture',  # Use user profile picture if available
+    'search_model': 'userauth.User', 
+    'user_avatar': 'profile_picture', 
 }
 
 AUTH_USER_MODEL = 'userauth.User'
