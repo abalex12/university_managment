@@ -32,6 +32,7 @@
                                                     Starts at: {{ quiz.quiz_starting_date_and_time }}<br>
                                                     <p>Total questions: {{ quiz.total_questions }}</p><br>
                                                     <p>Time: {{ quiz.time_limit }} min</p>
+                                                    <p>Quiz will start in: <span id="countdown">{{ remaining_time|floatformat:0 }}</span> seconds</p>
                                                     <div>
                                                         <button class="btn btn-primary float-right">
                                                             <a href="{% url 'assessment:take_quiz' quiz.quiz_id %}">Start Quiz</a>
@@ -68,7 +69,20 @@
         border: solid #403d3d;
     }
 </style>
+<script>
+    var countdownElement = document.getElementById('countdown');
+    var remainingTime = parseInt(countdownElement.innerText);
 
+    var countdownInterval = setInterval(function() {
+    remainingTime -= 1;
+    countdownElement.innerText = remainingTime;
+
+    if (remainingTime <= 0) {
+        clearInterval(countdownInterval);
+        location.reload();
+    }
+    }, 1000);
+</script>
 <script>
 function toggleAssignmentDetails(quizId) {
     const divId = `quiz-details-${quizId}`;

@@ -107,6 +107,17 @@ class QuizQuestion(models.Model):
     choice_4_image = models.ImageField(upload_to='choices/', null=True, blank=True)
     choice_4_is_correct = models.BooleanField(default=False)
 
+    def get_correct_choice(self):
+        if self.choice_1_is_correct:
+            return 1
+        elif self.choice_2_is_correct:
+            return 2
+        elif self.choice_3_is_correct:
+            return 3
+        elif self.choice_4_is_correct:
+            return 4
+        return None
+
     def clean(self):
         validate_question(self)
         validate_choice(self)

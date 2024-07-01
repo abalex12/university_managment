@@ -163,6 +163,8 @@ def quiz_detail(request, quiz_id):
 
 
 
+
+
 @login_required
 def take_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, quiz_id=quiz_id)
@@ -174,16 +176,6 @@ def take_quiz(request, quiz_id):
     submission = QuizSubmission.objects.filter(quiz=quiz, student=student).first()
     if submission:
         return HttpResponseForbidden("You have already submitted this quiz.")
-
-    current_datetime = localtime(timezone.now())
-    start_datetime = localtime(quiz.quiz_starting_date_and_time)
-
-    if current_datetime < start_datetime:
-        remaining_time = (start_datetime - current_datetime).total_seconds()
-        return render(request, 'academics/quiz/quiz_countdown.html', {
-            'quiz': quiz,
-            'remaining_time': remaining_time,
-        })
 
     if 'start_time' not in request.session:
         request.session['start_time'] = timezone.now().isoformat()
@@ -201,14 +193,19 @@ def take_quiz(request, quiz_id):
             submitted_at=timezone.now(),
             score=0
         )
+        total_score = 0
         for question in questions:
             selected_choice = request.POST.get(f'question_{question.question_id}')
             if selected_choice:
+                is_correct = int(selected_choice) == question.get_correct_choice()
+                if is_correct:
+                    total_score += 1
                 QuizAnswer.objects.create(
                     submission=submission,
                     question=question,
                     selected_choice=selected_choice
                 )
+        submission.score = (total_score * quiz.max_score)/ quiz.total_questions
         submission.save()
         return redirect('assessment:quiz_results', quiz_id=quiz_id)
 
@@ -220,15 +217,28 @@ def take_quiz(request, quiz_id):
     return render(request, 'assessment/quiz/take_quiz.html', context)
 
 
+
 @login_required
 def quiz_results(request, quiz_id):
     quiz = get_object_or_404(Quiz, quiz_id=quiz_id)
-    submission = get_object_or_404(QuizSubmission, quiz=quiz, student=request.user)
+    submission = get_object_or_404(QuizSubmission, quiz=quiz, student=request.user.student)
     answers = QuizAnswer.objects.filter(submission=submission)
-
+    
+    # Calculate the correct answers
+    questions_with_answers = []
+    for answer in answers:
+        question = answer.question
+        correct_choice = question.get_correct_choice()
+        
+        questions_with_answers.append({
+            'question': question,
+            'answer': answer,
+            'correct_choice': correct_choice
+        })
+    
     context = {
         'quiz': quiz,
         'submission': submission,
-        'answers': answers,
+        'questions_with_answers': questions_with_answers,
     }
-    return render(request, 'academics/quiz/quiz_results.html', context)
+    return render(request, 'assessment/quiz/quiz_result.html', context)

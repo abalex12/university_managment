@@ -15,5 +15,5 @@ urlpatterns =[
     path('take-quiz/<str:quiz_id>/', take_quiz, name='take_quiz'),
     path('quiz-detail/<str:quiz_id>/', quiz_detail, name='quiz_detail'),
     path("edit-assignment/<str:teacher_course_id>/<str:assignment_id>",edit_assignment,name='edit-assignment'),
-    path("quiz-result/<str:quiz_id>",quiz_results,name='quiz_result'),
+    path("quiz-result/<str:quiz_id>",quiz_results,name='quiz_results'),
 ]

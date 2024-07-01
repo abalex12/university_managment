@@ -1,0 +1,56 @@
+{% extends "parents/parent.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3 class="page-title">Quiz Results: {{ quiz.title }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Quiz Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Quiz Title:</strong> {{ quiz.title }}</p>
+                        <p><strong>Description:</strong> {{ quiz.description }}</p>
+                        <p><strong>Total Questions:</strong> {{ quiz.total_questions }}</p>
+                        <p><strong>Time Limit:</strong> {{ quiz.time_limit }} minutes</p>
+                        <p><strong>Submitted At:</strong> {{ submission.submitted_at }}</p>
+                        <p><strong>Score:</strong> {{ submission.score }}</p>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="card-title">Your Answers</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for item in questions_with_answers %}
+                            <li class="list-group-item">
+                                <p><strong>Question:</strong> {{ item.question.question_text }}</p>
+                                {% if item.question.question_image %}
+                                    <img src="{{ item.question.question_image.url }}" alt="Question Image" class="img-fluid">
+                                {% endif %}
+                                <p><strong>Your Answer:</strong> {{ item.answer.selected_choice }}</p>
+                                <p><strong>Correct Answer:</strong> {{ item.correct_choice }}</p>
+                                {% if item.answer.selected_choice == item.correct_choice %}
+                                <p class="text-success">Correct</p>
+                                {% else %}
+                                <p class="text-danger">Incorrect</p>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

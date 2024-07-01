@@ -38,6 +38,9 @@ class QuizCreateForm(forms.ModelForm):
             'max_score': forms.NumberInput(attrs={'class': 'form-control'}),
             'time_limit':forms.NumberInput(attrs={'class':'form-control'}),
         }
+# from django import forms
+# from .models import QuizQuestion
+
 class QuizQuestionForm(forms.ModelForm):
     class Meta:
         model = QuizQuestion
@@ -49,15 +52,16 @@ class QuizQuestionForm(forms.ModelForm):
             'choice_4_text', 'choice_4_image', 'choice_4_is_correct'
         ]
         widgets = {
-            'question_text': forms.Textarea(attrs={'rows': 2,'class': 'form-control'}),
-            'choice_1_text': forms.Textarea(attrs={'rows': 1,'class': 'form-control'}),
-            'choice_2_text': forms.Textarea(attrs={'rows': 1,'class': 'form-control'}),
-            'choice_3_text': forms.Textarea(attrs={'rows': 1,'class': 'form-control'}),
-            'choice_4_text': forms.Textarea(attrs={'rows': 1,'class': 'form-control'}),
+            'question_text': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'choice_1_text': forms.Textarea(attrs={'rows': 1, 'class': 'form-control'}),
+            'choice_2_text': forms.Textarea(attrs={'rows': 1, 'class': 'form-control'}),
+            'choice_3_text': forms.Textarea(attrs={'rows': 1, 'class': 'form-control'}),
+            'choice_4_text': forms.Textarea(attrs={'rows': 1, 'class': 'form-control'}),
         }
 
     def clean(self):
         cleaned_data = super().clean()
+
         # Validate question
         question_text = cleaned_data.get("question_text")
         question_image = cleaned_data.get("question_image")
@@ -71,8 +75,39 @@ class QuizQuestionForm(forms.ModelForm):
             (cleaned_data.get("choice_3_text"), cleaned_data.get("choice_3_image")),
             (cleaned_data.get("choice_4_text"), cleaned_data.get("choice_4_image")),
         ]
+        correct_choices = [
+            cleaned_data.get("choice_1_is_correct"),
+            cleaned_data.get("choice_2_is_correct"),
+            cleaned_data.get("choice_3_is_correct"),
+            cleaned_data.get("choice_4_is_correct"),
+        ]
         for i, (text, image) in enumerate(choices, start=1):
             if not text and not image:
                 raise forms.ValidationError(f'Choice {i} must have either text or an image.')
+
+        # Ensure exactly one correct choice
+        if correct_choices.count(True) != 1:
+            raise forms.ValidationError('There must be exactly one correct choice.')
+
         return cleaned_data
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Ensure only one correct choice
+        choices = [
+            'choice_1_is_correct',
+            'choice_2_is_correct',
+            'choice_3_is_correct',
+            'choice_4_is_correct'
+        ]
+        for choice in choices:
+            if getattr(instance, choice):
+                for other_choice in choices:
+                    if other_choice != choice:
+                        setattr(instance, other_choice, False)
+                break
+        
+        if commit:
+            instance.save()
+        return instance
