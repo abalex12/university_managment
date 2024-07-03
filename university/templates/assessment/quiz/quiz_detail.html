@@ -7,119 +7,177 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="container">
-
-                    <h1>{{ quiz.title }}</h1>
-                    <p>{{ quiz.description }}</p>
-
-                    {% for question in questions %}
-                      <div class="question-container">
-                        <div class="question-text">
-                          {% if question.question_text %}
-                            <p>{{ forloop.counter }}. {{ question.question_text }}</p>
-                          {% endif %}
-                          {% if question.question_image %}
-                            <img src="{{ question.question_image.url }}" alt="Question Image" class="question-image">
-                          {% endif %}
+                        <h1>{{ quiz.title }}</h1>
+                        <p>{{ quiz.description }}</p>
+                        {% if question_formset.non_form_errors %}
+                        <div class="alert alert-danger">
+                            <strong>Error!</strong> Please correct the following errors:
+                            <ul>
+                                {% for error in question_formset.non_form_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
                         </div>
-
-                        <div class="choices-container">
-                          <div class="choice">
-                            {% if question.choice_1_text %}
-                              <label><input type="radio" name="question_{{ question.question_id }}" value="1"> A. {{ question.choice_1_text }}</label>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                             {% endif %}
-                            {% if question.choice_1_image %}
-                              <label> A. <img src="{{ question.choice_1_image.url }}" alt="Choice A Image" class="choice-image"></label>
-                            {% endif %}
-                          </div>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ question_formset.management_form }}
+                            {% for form in question_formset %}
+                            <div class="question-container" id="question-{{ form.instance.pk }}">
+                                <div class="question-text">
+                                    {% if form.instance.question_text %}
+                                    <p>{{ forloop.counter }}. {{ form.instance.question_text }}</p>
+                                    {% endif %}
+                                    {% if form.instance.question_image %}
+                                    <img src="{{ form.instance.question_image.url }}" alt="Question Image" class="question-image">
+                                    {% endif %}
+                                    
+                                </div>
+                                <div class="choices-container">
+                                    <div class="choice {% if form.instance.choice_1_is_correct %}correct-choice{% endif %}">
+                                        {% if form.instance.choice_1_text %}
+                                        <label>
+                                            <input type="radio" name="question_{{ form.instance.pk }}" value="1" {% if form.instance.choice_1_is_correct %}checked{% endif %}>
+                                            A. {{ form.instance.choice_1_text }}
+                                        </label>
+                                        {% endif %}
+                                        {% if form.instance.choice_1_image %}
+                                        <label> A. <img src="{{ form.instance.choice_1_image.url }}" alt="Choice A Image" class="choice-image"></label>
+                                        {% endif %}
+                                    </div>
+                                    <div class="choice {% if form.instance.choice_2_is_correct %}correct-choice{% endif %}">
+                                        {% if form.instance.choice_2_text %}
+                                        <label>
+                                            <input type="radio" name="question_{{ form.instance.pk }}" value="2" {% if form.instance.choice_2_is_correct %}checked{% endif %}>
+                                            B. {{ form.instance.choice_2_text }}
+                                        </label>
+                                        {% endif %}
+                                        {% if form.instance.choice_2_image %}
+                                        <label> B. <img src="{{ form.instance.choice_2_image.url }}" alt="Choice B Image" class="choice-image"></label>
+                                        {% endif %}
+                                    </div>
+                                    <div class="choice {% if form.instance.choice_3_is_correct %}correct-choice{% endif %}">
+                                        {% if form.instance.choice_3_text %}
+                                        <label>
+                                            <input type="radio" name="question_{{ form.instance.pk }}" value="3" {% if form.instance.choice_3_is_correct %}checked{% endif %}>
+                                            C. {{ form.instance.choice_3_text }}
+                                        </label>
+                                        {% endif %}
+                                        {% if form.instance.choice_3_image %}
+                                        <label> C. <img src="{{ form.instance.choice_3_image.url }}" alt="Choice C Image" class="choice-image"></label>
+                                        {% endif %}
+                                    </div>
+                                    <div class="choice {% if form.instance.choice_4_is_correct %}correct-choice{% endif %}">
+                                        {% if form.instance.choice_4_text %}
+                                        <label>
+                                            <input type="radio" name="question_{{ form.instance.pk }}" value="4" {% if form.instance.choice_4_is_correct %}checked{% endif %}>
+                                            D. {{ form.instance.choice_4_text }}
+                                        </label>
+                                        {% endif %}
+                                        {% if form.instance.choice_4_image %}
+                                        <label> D. <img src="{{ form.instance.choice_4_image.url }}" alt="Choice D Image" class="choice-image"></label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="toggleEditForm('{{ form.instance.pk }}')">Edit</button>
+                            </div>
+                            <div class="question-edit-form" id="edit-form-{{ form.instance.pk }}" style="display:none;">
+                                {{ form.as_p }}
+                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleEditForm('{{ form.instance.pk }}')">Cancel</button>
+                            </div>
+                            {% endfor %}
+                        </form>
+                        <style>
+                            
+                            .question-container {
+                                
+                                margin-bottom: 20px;
+                                padding: 15px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                word-wrap: break-word; 
+                                 overflow-wrap: break-word;
+                            }
+                            .question-text {
+                                margin-bottom: 10px;
+                            }
+                            .question-text img {
+                                max-width: 100%;
+                                height: auto;
+                            }
+                            .question-image {
+                                max-width: 100%;
+                                height: 150px;
+                                width: 100%;
+                                object-fit: cover;
+                                display: block;
+                                margin-top: 10px;
+                            }
+                            .choices-container {
+                                margin-bottom: 20px;
+                                padding: 15px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                word-wrap: break-word; /* Wrap long words to new line */
+                                overflow-wrap: break-word;
+                            }
+                            .choice {
+                                flex: 1 1 45%;
+                                margin: 10px;
+                                padding: 10px;
+                                border: 1px solid #ccc;
+                                border-radius: 5px;
+                                box-sizing: border-box;
+                            }
+                            .choice-image {
+                                max-width: 100%;
+                                height: 100px;
+                                width: 100%;
+                                object-fit: cover;
+                                display: block;
+                                margin-top: 10px;
+                            }
+                            .choice label {
+                                display: block;
+                                margin-bottom: 5px;
+                            }
+                            .choice img {
+                                max-width: 100%;
+                                height: auto;
+                            }
+                            .correct-choice {
+                                background-color: #a0dfaf;
+                                border-color: #c3e6cb;
+                            }
+                            .correct-choice input[type="radio"] {
+                                background-color: #d4edda;
+                            }
+                        </style>
+                        <script>
+                            function toggleEditForm(questionId) {
+                                var displayDiv = document.getElementById('question-' + questionId);
+                                var editFormDiv = document.getElementById('edit-form-' + questionId);
 
-                          <div class="choice">
-                            {% if question.choice_2_text %}
-                              <label><input type="radio" name="question_{{ question.question_id }}" value="2"> B. {{ question.choice_2_text }}</label>
-                            {% endif %}
-                            {% if question.choice_2_image %}
-                            <label> B. <img src="{{ question.choice_2_image.url }}" alt="Choice B Image" class="choice-image"></label>
-                            {% endif %}
-                          </div>
-
-                          <div class="choice">
-                            {% if question.choice_3_text %}
-                              <label><input type="radio" name="question_{{ question.question_id }}" value="3"> C. {{ question.choice_3_text }}</label>
-                            {% endif %}
-                            {% if question.choice_3_image %}
-                            <label> C. <img src="{{ question.choice_3_image.url }}" alt="Choice C Image" class="choice-image"></label>
-                            {% endif %}
-                          </div>
-
-                          <div class="choice">
-                            {% if question.choice_4_text %}
-                              <label><input type="radio" name="question_{{ question.question_id }}" value="4"> D. {{ question.choice_4_text }}</label>
-                            {% endif %}
-                            {% if question.choice_4_image %}
-                            <label> D. <img src="{{ question.choice_4_image.url }}" alt="Choice D Image" class="choice-image"></label>
-                            {% endif %}
-                          </div>
-                        </div>
-                      </div>
-                    {% endfor %}
-                    <style>
-                      .question-container {
-                        margin-bottom: 20px;
-                        padding: 15px;
-                        border: 1px solid #ddd;
-                        border-radius: 5px;
-                      }
-
-                      .question-text {
-                        margin-bottom: 10px;
-                      }
-
-                      .question-text img {
-                        max-width: 100%;
-                        height: auto;
-                      }
-                      .question-image {
-                      max-width: 100%;
-                      height: 150px;
-                      width: 100%;
-                      object-fit: cover;
-                      display: block;
-                      margin-top: 10px;
-                    }
-
-                      .choices-container {
-                        display: flex;
-                        flex-wrap: wrap;
-                      }
-
-                      .choice {
-                        flex: 1 1 45%;
-                        margin: 10px;
-                        padding: 10px;
-                        border: 1px solid #ccc;
-                        border-radius: 5px;
-                        box-sizing: border-box;
-                      }
-                      .choice-image {
-                      max-width: 100%;
-                      height: 100px;
-                      width: 100%;
-                      object-fit: cover;
-                      display: block;
-                      margin-top: 10px;
-                    }
-
-                      .choice label {
-                        display: block;
-                        margin-bottom: 5px;
-                      }
-
-                      .choice img {
-                        max-width: 100%;
-                        height: auto;
-                      }
-                    </style>
-
-
+                                if (editFormDiv.style.display === 'none' || editFormDiv.style.display === '') {
+                                    editFormDiv.style.display = 'block';
+                                    displayDiv.style.display = 'none';
+                                } else {
+                                    editFormDiv.style.display = 'none';
+                                    displayDiv.style.display = 'block';
+                                }
+                            }
+                        </script>
                     </div>
                 </div>
             </div>

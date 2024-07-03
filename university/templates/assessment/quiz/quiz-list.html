@@ -15,7 +15,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">{{ course.course_name }}</h4>
+                        <h4 class="card-title">{{ teachercourse.course.course_name }}</h4>
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
@@ -23,7 +23,7 @@
                                 <strong>Current Quiz</strong>
                                 <ul class="list-group">
                                     {% for quiz in quizzes %}
-                                        {% if quiz.teacher_course.course_semester.course == course %}
+                                        {% if quiz.teacher_course == teachercourse %}
                                             <li class="list-group-item">
                                                 <a href="javascript:void(0);" onclick="toggleQuizDetails('{{quiz.quiz_id}}')">{{ quiz.title }}</a>
                                                 <div id="quiz-details-{{ quiz.quiz_id }}" class="quiz-details" style="display: none;">
@@ -34,10 +34,20 @@
                                                     <p>Time: {{ quiz.time_limit }} min</p>
                                                     <p>Remaining time: <span id="countdown-{{ quiz.quiz_id }}">{{ quiz.remaining_time }}</span> seconds</p>
                                                     <div>
-                                                        <button class="btn btn-primary float-right">
-                                                            <a href="{% url 'assessment:take_quiz' quiz.quiz_id %}">Start Quiz</a>
+                                                        <button class="btn btn-primary float-left ">
+                                                            <a href="{% url 'assessment:quiz_detail' quiz.quiz_id %}">Quiz detail</a>
                                                         </button>
+                                                        <!-- <button><a href="{% url 'assessment:quiz_delete' quiz.quiz_id %}">Delete Quiz</a></button> -->
                                                     </div>
+                                                    <div class="btn btn-primary float-right">
+                                                        <form action="{% url 'assessment:quiz_delete' quiz.quiz_id %}" method="post">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Delete Quiz</button>
+                                                        </form>
+                                                        
+                                                    </div>
+                                                    
+                                                    
                                                 </div>
                                             </li>
                                         {% endif %}
@@ -47,10 +57,6 @@
                         </ul>
                     </div>
                     <div>
-                        <button class="btn btn-secondary" onclick="showSubmittedQuizzes('{{ quiz.quiz_id }}')">Taken Past Quiz</button>
-                        <div id="submitted-quizzes-{{ quiz.quiz_id }}" class="submitted-quizzes" style="display: none;"></div>
-                        <button class="btn btn-secondary" onclick="showUnsubmittedQuizzes('{{ quiz.quiz_id }}')">Not Taken Past Quiz</button>
-                        <div id="unsubmitted-quizzes-{{ quiz.quiz_id }}" class="unsubmitted-quizzes" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -70,59 +76,11 @@
     }
 </style>
 <script>
-function toggleQuizDetails(quizId) {
+    function toggleQuizDetails(quizId) {
     const divId = `quiz-details-${quizId}`;
     const div = document.getElementById(divId);
     if (div) {
         div.style.display = div.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-function showSubmittedQuizzes(quizId) {
-    const divId = `submitted-quizzes-${quizId}`;
-    const div = document.getElementById(divId);
-
-    if (div.style.display === 'none') {
-        div.innerHTML = `
-            {% for submitted_quiz in submitted_quizzes %}
-            {% if submitted_quiz.quiz.teacher_course.course_semester.course == course %}
-            <ul class="list-group mt-3">
-                <li class="list-group-item">{{ submitted_quiz.quiz.title }} at: {{ submitted_quiz.submitted_at }}</li>
-            </ul>
-            {% endif %}
-            {% empty %}
-            <ul class="list-group mt-3">
-                <li class="list-group-item">No submissions</li>
-            </ul>
-            {% endfor %}
-        `;
-        div.style.display = 'block';
-    } else {
-        div.style.display = 'none';
-    }
-}
-
-function showUnsubmittedQuizzes(quizId) {
-    const divId = `unsubmitted-quizzes-${quizId}`;
-    const div = document.getElementById(divId);
-
-    if (div.style.display === 'none') {
-        div.innerHTML = `
-            {% for unsubmitted_quiz in unsubmitted_quizzes %}
-            {% if unsubmitted_quiz.teacher_course.course_semester.course == course %}
-            <ul class="list-group mt-3">
-                <li class="list-group-item">{{ unsubmitted_quiz.title }} at: {{ unsubmitted_quiz.quiz_starting_date_and_time }}</li>
-            </ul>
-            {% endif %}
-            {% empty %}
-            <ul class="list-group mt-3">
-                <li class="list-group-item">No submissions</li>
-            </ul>
-            {% endfor %}
-        `;
-        div.style.display = 'block';
-    } else {
-        div.style.display = 'none';
     }
 }
 </script>

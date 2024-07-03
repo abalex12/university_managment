@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import *
+from .quiz_view import *
+from .assignment_view import *
 
 app_name='assessment'
 
 urlpatterns =[
-    path('section/',open_sections,name="sections"),
     path('create-assignment/<str:teacher_course_id>',create_assignment,name="create_assignment"),
     path('submit-assignment/<str:assignment_id>',submit_assignment , name='submit_assignment'),
     path('teacher-assignment/<str:teacher_course_id>', teacher_view_of_assignments,name='teacher_assignments'),
@@ -16,4 +16,6 @@ urlpatterns =[
     path('quiz-detail/<str:quiz_id>/', quiz_detail, name='quiz_detail'),
     path("edit-assignment/<str:teacher_course_id>/<str:assignment_id>",edit_assignment,name='edit-assignment'),
     path("quiz-result/<str:quiz_id>",quiz_results,name='quiz_results'),
+    path("quiz-list/<str:teacher_course_id>",quiz_list,name='quiz_list'),
+    path('quiz/<str:quiz_id>/delete/', quiz_delete, name='quiz_delete'),
 ]

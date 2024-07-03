@@ -169,12 +169,7 @@ def edit_profile(request):
 
     return render(request, 'academics/edit_detail.html', context)
 
-# def course_detail(request,course_id):
-#     user = request.user
-#     course=Course.get(course_id=course_id)
-#     if user.role.role_name == "Student":
-#         return render(request,"academics/course_detail.html")
-#     else:
-#         pass
-
+@login_required
+def open_sections(reqeust):
+    return render(reqeust,'academics/teacher_sections.html')
     

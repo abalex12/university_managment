@@ -1,123 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Assignment, AssignmentSubmission, Quiz, QuizSubmission, QuizQuestion, QuizAnswer
-from .forms import AssignmentCreateForm, AssignmentSubmissionForm, QuizCreateForm, QuizQuestionForm
-from academics.models import TeacherCourse,Enrollment,Course
-from .forms import QuizCreateForm, QuizQuestionForm
+from .models import Quiz, QuizSubmission, QuizQuestion, QuizAnswer
+from .forms import  QuizCreateForm, QuizQuestionForm
+from academics.models import TeacherCourse,Course
 from django.forms import modelformset_factory
 from django.utils import timezone
 from django.http import HttpResponseForbidden
 from django.utils.timezone import localtime
 from userauth.models import Student
-from assessment.context_processor import get_current_academic_year
-
+# from assessment.context_processor import get_current_academic_year
 import datetime
+from django.contrib import messages
 
 
 
-
-@login_required
-def create_assignment(request, teacher_course_id):
-    teacher_course = get_object_or_404(TeacherCourse, teacher_course_id=teacher_course_id, teacher=request.user.teacher)
-
-    if request.method == 'POST':
-        form = AssignmentCreateForm(request.POST, request.FILES)
-        if form.is_valid():
-            assignment = form.save(commit=False)
-            assignment.teacher_course = teacher_course
-            assignment.save()
-            return redirect('assignments_list')  # Replace with your actual redirect URL
-    else:
-        form = AssignmentCreateForm()
-
-    context = {
-        'form': form,
-        'teacher_course': teacher_course,
-    }
-    return render(request, 'assessment/assignment/create_assignment.html', context)
-
-@login_required
-def edit_assignment(request,teacher_course_id,assignment_id):
-    teacher_course = get_object_or_404(TeacherCourse, teacher_course_id=teacher_course_id, teacher=request.user.teacher)
-    assignment=get_object_or_404(Assignment,assignment_id=assignment_id)
-
-
-    if request.method=='POST':
-        form =AssignmentCreateForm(request.POST, request.FILES, instance=assignment)
-        if form.is_valid():
-            form.save()
-            redirect('assessment:assignment-list', teacher_course_id = teacher_course.teacher_course_id)
-    else:
-            form =AssignmentCreateForm(instance= assignment)
-    context ={
-            'form':form,
-            'teacher_course':teacher_course
-        }
-    return render(request,'assessment/assignment/edit_assignment.html',context)
-
-
-
-
-
-@login_required
-def open_sections(reqeust):
-    return render(reqeust,'academics/teacher_sections.html')
-@login_required
-def open_Assignment(request,course_id):
-    course=get_object_or_404(Course,course_id=course_id)
-    context={}
-    context['course']=course
-    return render(request,"assessment/assignment/assignment_view.html",context)
 @login_required
 def open_Quiz(request,course_id):
     course=get_object_or_404(Course,course_id=course_id)
     return render(request,"assessment/quiz/Quiz_view.html",{"course":course})
 
-@login_required
-def submit_assignment(request, assignment_id):
-    assignment = get_object_or_404(Assignment, assignment_id=assignment_id)
-    student = request.user.student  # assuming the user is linked to a student profile
-    if request.method == 'POST':
-        form = AssignmentSubmissionForm(request.POST, request.FILES)
-        if form.is_valid():
-            submission = form.save(commit=False)
-            submission.student = student
-            submission.assignment = assignment
-            submission.save()
-            # return redirect('assignment_detail', assignment_id=assignment_id)  # Update this with your actual redirect URL
-    else:
-        form = AssignmentSubmissionForm()
-    
-    return render(request, 'assessment/assignment/submit_assignment.html', {'form': form, 'assignment': assignment})
 
-
-@login_required
-def teacher_view_of_assignments(request, teacher_course_id):
-    # Get the TeacherCourse object using the teacher_course_id
-    teacher_course = get_object_or_404(TeacherCourse, teacher_course_id=teacher_course_id)
-
-    # Ensure the logged-in teacher is the one associated with the teacher_course
-    if request.user.teacher != teacher_course.teacher:
-        return redirect('some_error_page')  # Replace with appropriate error handling
-
-    # Get all assignments created by the teacher for this course
-    assignments = Assignment.objects.filter(teacher_course=teacher_course)
-    
-    # Create a list to hold assignments and their respective submissions
-    assignments_with_submissions = []
-    for assignment in assignments:
-        submissions = AssignmentSubmission.objects.filter(assignment=assignment)
-        assignments_with_submissions.append({
-            'assignment': assignment,
-            'submissions': submissions
-        })
-
-    context = {
-        'assignments_with_submissions': assignments_with_submissions,
-        'teacher_course': teacher_course,
-    }
-    
-    return render(request, 'assessment/assignment/teacher_assignments.html', context)
 
 @login_required
 def create_quiz(request, teacher_course_id):
@@ -145,26 +47,41 @@ def add_questions(request, quiz_id):
                 question.quiz = quiz
                 question.save()
             return redirect('assessment:quiz_detail', quiz_id=quiz.quiz_id)
+        else:
+            print("hlp")
     else:
         formset = QuizQuestionFormSet(queryset=QuizQuestion.objects.none())
     return render(request, 'assessment/quiz/add_questions.html', {'formset': formset, 'quiz': quiz})
-
-
 @login_required
 def quiz_detail(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = QuizQuestion.objects.filter(quiz=quiz)
+    QuizQuestionFormSet = modelformset_factory(QuizQuestion, form=QuizQuestionForm, extra=0)
+
+    if request.method == 'POST':
+        question_formset = QuizQuestionFormSet(request.POST,request.FILES, queryset=questions)
+        if question_formset.is_valid():
+           
+            question_formset.save()
+            return redirect('assessment:quiz_detail', quiz_id=quiz_id)
+        
+    else:
+        question_formset = QuizQuestionFormSet(queryset=questions)
+
     context = {
         'quiz': quiz,
         'questions': questions,
+        'question_formset': question_formset,
     }
     return render(request, 'assessment/quiz/quiz_detail.html', context)
 
-
-
-
-
-
+@login_required
+def quiz_list(request,teacher_course_id):
+    teachercourse=get_object_or_404(TeacherCourse,teacher_course_id=teacher_course_id)
+    context={
+        'teachercourse':teachercourse
+    }
+    return render(request,'assessment/quiz/quiz-list.html',context)
 @login_required
 def take_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, quiz_id=quiz_id)
@@ -242,3 +159,19 @@ def quiz_results(request, quiz_id):
         'questions_with_answers': questions_with_answers,
     }
     return render(request, 'assessment/quiz/quiz_result.html', context)
+
+@login_required
+def quiz_delete(request, quiz_id):
+    quiz = get_object_or_404(Quiz, quiz_id=quiz_id)
+    teachercourse_id = quiz.teacher_course.teacher_course_id  # Assuming the relationship exists
+    print(teachercourse_id)
+    if request.method == 'POST':
+        quiz.delete()
+        # print("jlsf")
+        messages.success(request, 'Quiz deleted successfully.')  # Add success message
+        return redirect('assessment:quiz_list', teacher_course_id=teachercourse_id)
+    
+    # Handle GET request with a confirmation form or direct deletion
+    # This part can be adjusted based on your UI/UX flow for deletion
+    
+    return redirect('assessment:quiz_list', teacher_course_id=teachercourse_id)
