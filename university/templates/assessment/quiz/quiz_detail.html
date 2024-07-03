@@ -18,17 +18,7 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            {% endfor %}
                         {% endif %}
-                            {% endif %}
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ question_formset.management_form }}
